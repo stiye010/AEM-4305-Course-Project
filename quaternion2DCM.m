@@ -5,5 +5,5 @@ function [DCM] = quaternion2DCM(q)
 n = q(1);
 E = q(2:4);
 
-DCM = (n^2-transpose(E)*E)*eye(3) + 2*E*transpose(E) - 2*n*Cross(E);
+DCM = (n^2-E'*E)*eye(3) + 2*E*E' - 2*n*Cross(E);
 end
