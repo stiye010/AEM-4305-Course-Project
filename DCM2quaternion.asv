@@ -1,0 +1,37 @@
+function [q] = DCM2quaternion(DCM)
+%DCM2quaternion takes in a DCM and coverts it to quaternions
+%Uses the Sheppard's Method
+
+n_sq = 1/4 * (1+trace(DCM));
+E1_sq = 1/4 * (1+2*DCM(1,1)-trace(DCM));
+E2_sq = 1/4 * (1+2*DCM(2,2)-trace(DCM));
+E3_sq = 1/4 * (1+2*DCM(3,3)-trace(DCM));
+
+% Find largest of above expressions
+m = max([n_sq,E1_sq,E2_sq,E3_sq]);
+
+% Compute remaining components
+    if m == n_sq
+        n = sqrt(n_sq);
+        E1 = (DCM(2,3)-DCM(3,2))/(4*n);
+        E2 = (DCM(3,1)-DCM(1,3))/(4*n);
+        E3 = (DCM(1,2)-DCM(2,1))/(4*n);
+    elseif m == E1_sq
+        E1 = sqrt(E1_sq);
+        n = (DCM(2,3)-DCM(3,2))/(4*E1);
+        E2 = (DCM(1,2)+DCM(2,1))/(4*E1);
+        E3 = (DCM(3,1)+DCM(1,3))/(4*E1);
+    elseif m == E2_sq
+        E2 = sqrt(E2_sq);
+        n = (DCM(3,1)-DCM(1,3))/(4*E2);
+        E1 = (DCM(1,2)+DCM(2,1))/(4*E2);
+        E3 = (DCM(2,3)+DCM(3,2))/(4*E2);
+    elseif m == E3_sq
+        E3 = sqrt(E3_sq);
+        n = (DCM(1,2)-DCM(2,1))/(4*E3);
+        E1 = (DCM(3,1)+DCM(1,3))/(4*E3);
+        E2 = (DCM(2,3)+DCM(3,2))/(4*E3);
+    end
+
+q = [n;E1;E2;E3];
+end

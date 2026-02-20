@@ -1,0 +1,10 @@
+function [DCM] = euler321toDCM(euler)
+% Takes in euler angles and outputs DCM
+% Uses 321 euler angle set
+C_1 = [1 0 0;
+    0 cos(euler(1)) sin(euler(1));0 -sin(euler(1)) cos(euler(1))];
+C_2 = [cos(euler(2)) 0 -sin(euler(2));0 1 0;sin(euler(2)) 0 cos(euler(2))];
+C_3 = [cos(euler(3)) sin(euler(3)) 0;-sin(euler(3)) cos(euler(3)) 0;0 0 1];
+
+DCM = C_1*C_2*C_3;
+end

@@ -1,0 +1,6 @@
+function [u_cross] = Cross(u_bar)
+% This function takes in a vector and outputs the cross product operator
+u_cross = [0 -u_bar(3) u_bar(2); ...
+           u_bar(3) 0 -u_bar(1); ...
+           -u_bar(2) u_bar(1) 0];
+end
