@@ -1,7 +1,7 @@
 function params = loadParameters()
 % loadParameters takes in no inputs but outputs a stuct containing:
-%   mu_moon, mass of spacecraft, Inertia matrix of spacecraft, 
-%   simulation time span, simulation initial conditions
+%   mu_moon,mass of spacecraft, Inertia matrix simulation time span, simulation initial
+%   conditions
 
 % Physical Parameters
 params.mu_moon = 4902.800; % Gravitational constant of the moon (km^3/s^2)
