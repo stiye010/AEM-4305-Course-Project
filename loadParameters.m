@@ -27,6 +27,10 @@ params.odeOptions3 = odeset('RelTol', 1e-12,'AbsTol',1e-12);
 % Initial Conditions
 r0 = [0; 1343.503; 1343.503];  % initial position (km)
 v0 = [0; -1.135874; 1.135874]; % initial velocity (km/s)
-params.x0 = [r0; v0];      % Initial condtitios for the simulation
+w0 = [0.08; -0.1; 0.3]; % initial angular velocity (rad/s)
+q0 = [1;0;0;0]; % initial quaternions
+
+params.x0 = [r0; v0];
+% params.x0 = [q0;w0];      % Initial condtitios for the simulation
 
 end

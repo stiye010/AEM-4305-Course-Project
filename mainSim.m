@@ -1,6 +1,8 @@
 % mainSim.m
 % numerically integrates a spacecrafts tajectory and then plots the
 % corresponding trajectories in position space
+
+%% Project Part 2
 close all; clear; clc
 
 % Load in Paramaters and Initial Conditions
@@ -62,3 +64,19 @@ ylabel('E(t) - E(0)')
 legend('Tol = 1e-12')
 
 
+%% Part 3 of Project
+rn = x3(:,1:3);
+vn = x3(:,4:6);
+
+rd = posN2Rd(rn,vn,params);
+
+figure
+subplot(3,1,1)
+plot(t3,rd(:,1),'b',"LineWidth",1.2);
+grid on; ylabel('r_1d (km)');
+subplot(3,1,2)
+plot(t3,rd(:,2),'r',"LineWidth",1.2);
+grid on; ylabel('r_2d (km)');
+subplot(3,1,3)
+plot(t3,rd(:,3),'g',"LineWidth",1.2);
+grid on; ylabel('r_3d (km)'); xlabel('Time(s)');
