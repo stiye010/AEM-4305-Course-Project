@@ -1,8 +1,6 @@
 function [xdot] = f2BP(x,params)
 % f2BP takes in x and the parameters struct and outputs the EOM xdot
 
-params = loadParameters();
-
 r_sw = x(1:3); % Position
 v_sw = x(4:6); % Velocity
 

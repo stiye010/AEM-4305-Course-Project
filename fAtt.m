@@ -1,17 +1,16 @@
-function [x_dot] = fAtt(x)
+function [xdot] = fAtt(x,tau,params)
 % fAtt takes in the state and outputs the equations of motion
-% Input state x, uses loadParameters and the quaternionKinematics function
+% Input state x and external torque, uses loadParameters and the 
+% quaternionKinematics function
 
-params = loadParameters;
 I = params.Ib;
-n = x(1);
-E = x(2:4);
-w = x(5:7);
+q = x(7:10);
+w = x(11:13);
 wx = Cross(w);
 
-q_dot = quaternionKinematics(w,[n;E]);
+q_dot = quaternionKinematics(w,q);
 
-w_dot = I^(-1)*(-wx)*I*w;
+w_dot = I^(-1)*(tau - wx*I*w);
 
-x_dot = [q_dot; w_dot];
+xdot = [q_dot; w_dot];
 end
