@@ -9,7 +9,7 @@ close all; clear; clc
 params = loadParameters();
 
 % Simulate
-[t,x] = ode45(@(t,x) fAtt(x), ...
+[t,x] = ode45(@(t,x) fAtt(x,params), ...
     params.tspan, params.x0, params.odeOptions3);
 
 n = x(:,1);
