@@ -1,11 +1,11 @@
-%% Project Part 4
+%% Project Part 4 and 5
 % mainSim.m
 % numerically integrates a spacecrafts orbital and attitude motion 
 % full 6 degree-of-freedom simulation
 
 close all; clear; clc
 
-% Load in Paramaters and Initial Conditions
+% Load in Parameters and Initial Conditions
 params = loadParameters();
 
 % Simulate
@@ -30,7 +30,30 @@ E_diff = E - E(1);
 % Euler Angles
 eul = quats2EulAng321(q);
 
-% Plots
+% Sensor Measurements
+[rwc_n,rsc_n,rwc_b,rsc_b] = genMeasurements(x);
+
+% Euler Angle Errors
+C_TRIAD = DCMEstimate(rwc_n,rsc_n,rwc_b,rsc_b);
+
+C_eb = DCMError(C_TRIAD,q);
+
+N = size(x,1);
+eul_err = zeros(N,3);
+
+for i = 1:N
+    eul_err(i,:) = DCM2euler321(C_eb{i});
+end
+
+% Spacecraft Position Relative to Gateway Resolved in Communication Frame
+rgwn = buildGatewayPosInterp();
+
+r_gs_rc = posgsN2Rc(r,t,rgwn);
+
+% Angular Velocity Communication Frame
+w_rcn_rc = wRcN(r,t,rgwn);
+
+%% Plots
 % Position
 figure
 plot3(r(:,1),r(:,2),r(:,3),"LineWidth",1.2);
@@ -92,4 +115,42 @@ plot(t,rad2deg(eul(:,2)),"LineWidth",1.2);
 grid on; ylabel('\theta (deg)');
 subplot(3,1,3)
 plot(t,rad2deg(eul(:,3)),"LineWidth",1.2);
-grid on; ylabel('\phi (deg)'); xlabel('Time(s)');
+grid on; ylabel('\phi (deg)'); xlabel('Time (s)');
+
+% Euler Angles Error
+figure
+subplot(3,1,1)
+plot(t,rad2deg(eul_err(:,1)),"LineWidth",1.2);
+grid on; ylabel('\psi_{err} (deg)');
+subplot(3,1,2)
+plot(t,rad2deg(eul_err(:,2)),"LineWidth",1.2);
+grid on; ylabel('\theta_{err} (deg)');
+subplot(3,1,3)
+plot(t,rad2deg(eul_err(:,3)),"LineWidth",1.2);
+grid on; ylabel('\phi_{err} (deg)'); xlabel('Time (s)');
+
+% Position: s/c relative to Gateway resolved in communication frame
+% first 1000 time steps
+figure
+subplot(3,1,1)
+plot(t(1:1000),r_gs_rc(1:1000,1),"LineWidth",1.2);
+grid on; ylabel('r_{gs,r^c,1} (km)');
+subplot(3,1,2)
+plot(t(1:1000),r_gs_rc(1:1000,2),"LineWidth",1.2);
+grid on; ylabel('r_{gs,r^c,2} (km)');
+subplot(3,1,3)
+plot(t(1:1000),r_gs_rc(1:1000,3),"LineWidth",1.2);
+grid on; ylabel('r_{gs,r^c,3} (km)'); xlabel('Time (s)')
+
+% Angular Velocity Communication Frame
+% first 1000 time steps
+figure
+subplot(3,1,1)
+plot(t(1:1000),w_rcn_rc(1:1000,1),"LineWidth",1.2);
+grid on; ylabel('w_{r^cn,r^c,1} (rad/s)');
+subplot(3,1,2)
+plot(t(1:1000),w_rcn_rc(1:1000,2),"LineWidth",1.2);
+grid on; ylabel('w_{r^cn,r^c,2} (rad/s)');
+subplot(3,1,3)
+plot(t(1:1000),w_rcn_rc(1:1000,3),"LineWidth",1.2);
+grid on; ylabel('w_{r^cn,r^c,3} (rad/s)'); xlabel('Time (s)')
