@@ -1,5 +1,5 @@
 function params = loadParameters()
-% loadParameters takes in no inputs but outputs a stuct containing:
+% loadParameters takes in no inputs but outputs a struct containing:
 %   mu_moon, mass of spacecraft, Inertia matrix of spacecraft, 
 %   simulation time span, simulation initial conditions
 
@@ -17,7 +17,7 @@ params.Ib = [I1 0 0;
 
 % Simulation Parameters
 tstart = 0;
-tend = 7500; % in seconds
+tend = 60; % in seconds
 params.tspan = [tstart,tend];   % Time span for the simulation
 
 params.odeOptions1 = odeset('RelTol', 1e-2,'AbsTol',1e-2); % ode options
@@ -30,5 +30,5 @@ v0 = [0; -1.135874; 1.135874]; % initial velocity (km/s)
 w0 = [0.08; -0.1; 0.3]; % initial angular velocity (rad/s)
 q0 = [1;0;0;0]; % initial quaternions
 
-params.x0 = [r0; v0; q0; w0];      % Initial condtitios for the simulation
+params.x0 = [r0; v0; q0; w0];      % Initial conditions for the simulation
 end
