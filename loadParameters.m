@@ -17,8 +17,12 @@ params.Ib = [I1 0 0;
 
 % Simulation Parameters
 tstart = 0;
-tend = 60; % in seconds
+tend = 2500; % in seconds
 params.tspan = [tstart,tend];   % Time span for the simulation
+
+params.tspanNP = [0, 2500];
+params.tspanCP = [2500, 5000];
+params.tspanSP = [5000, 7500];
 
 params.odeOptions1 = odeset('RelTol', 1e-2,'AbsTol',1e-2); % ode options
 params.odeOptions2 = odeset('RelTol', 1e-6,'AbsTol',1e-6);

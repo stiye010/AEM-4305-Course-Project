@@ -7,7 +7,8 @@ function [w_rcn_rc] = wRcN(rsw_n,t,rgwn)
 
 N = length(t);
 
-dt = t(2) - t(1);
+% dt = t(2) - t(1);
+dt = 1;
 
 w_rcn_rc = zeros(N,3);
 

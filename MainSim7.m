@@ -1,16 +1,18 @@
 %% Project Part 6
-% Main Sim for Questions 3a
+% Main Sim for Questions 3b
 % numerically integrates a spacecrafts orbital and attitude motion 
 % full 6 degree-of-freedom simulation
-% With Nadir Pointing Control Law
+% With Communication Pointing Control Law
 
 close all; clear; clc
 
 % Load in Parameters and Initial Conditions
 params = loadParameters();
 
+rgwn = buildGatewayPosInterp();
+
 % Simulate
-[t,x] = ode45(@(t,x) f2BPGravGradNP(x, t, params), ...
+[t,x] = ode45(@(t,x) f2BPGravGradCP(x, t, params, rgwn), ...
     params.tspan, params.x0, params.odeOptions3);
 
 r = x(:,1:3);
@@ -38,30 +40,33 @@ Kd = [k_d 0 0;...
     0 0 k_d];
 kp = 0.03;
 
+w_rcn_rc = wRcN(r,t,rgwn);
+
 for i = 1:N
     w_i = w(i,:)';
     r_i = r(i,:)';
     v_i = v(i,:)';
     q_i = q(i,:)';
-    
+    rgw_n = rgwn(t(i));
+
     % DCMs
     C_bn_i = quaternion2DCM(q_i);
-    
-    C_rdn = dcmRd2N(r_i,v_i);
 
-    C_br_est_i = C_bn_est{i} * C_rdn';
+    C_rcn = dcmRc2N(r_i,rgw_n);
+
+    C_br_est_i = C_bn_est{i} * C_rcn';
 
     % Angular velocities
-    w_rdn_rd = wRdN(r_i,params);
+    w_rcn_rc_i = w_rcn_rc(i,:)'; 
 
-    w_rdn_n = C_rdn' * w_rdn_rd;
+    w_rcn_n = C_rcn' * w_rcn_rc_i;
 
-    w_rdn_b = C_bn_est{i} * w_rdn_n;
+    w_rcn_b = C_bn_est{i} * w_rcn_n;
 
     w_bn_b_est = w_i;
 
-    w_brd_b = w_bn_b_est - w_rdn_b;
-    
+    w_brc_b = w_bn_b_est - w_rcn_b;
+
     % Quaternion 
     q_br_est(i,:) = DCM2quaternion(C_br_est_i);
 
@@ -69,10 +74,9 @@ for i = 1:N
 
     % Torques
     tau_gg = 3*mu / (r_i'*r_i)^(5/2) * Cross(C_bn_i*r_i) * I*C_bn_i*r_i;
-    tau_u(i,:) = -kp*e_br - Kd*w_brd_b - I*Cross(w_bn_b_est)*w_rdn_b ...
-            + Cross(w_rdn_b)*I*w_bn_b_est - tau_gg;
+    tau_u(i,:) = -kp*e_br - Kd*w_brc_b - I*Cross(w_bn_b_est)*w_rcn_b ...
+        + Cross(w_rcn_b)*I*w_bn_b_est - tau_gg;
 end
-
 %% Plotting
 % Control Torque
 figure
@@ -90,13 +94,13 @@ grid on; ylabel('\tau_u_3 (Nm)'); xlabel('Time (s)');
 figure
 subplot(4,1,1)
 plot(t,q_br_est(:,1),"LineWidth",1.2);
-grid on;ylabel('\eta_{br^d}');
+grid on;ylabel('\eta_{br^c}');
 subplot(4,1,2)
 plot(t,q_br_est(:,2),"LineWidth",1.2);
-grid on; ylabel('\epsilon_{br^d}_1');
+grid on; ylabel('\epsilon_{br^c}_1');
 subplot(4,1,3)
 plot(t,q_br_est(:,3),"LineWidth",1.2);
-grid on; ylabel('\epsilon_{br^d}_2');
+grid on; ylabel('\epsilon_{br^c}_2');
 subplot(4,1,4)
 plot(t,q_br_est(:,4),"LineWidth",1.2);
-grid on; ylabel('\epsilon_{br^d}_3'); xlabel('Time (s)');
+grid on; ylabel('\epsilon_{br^c}_3'); xlabel('Time (s)');
